@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SDG 11.3.1 ver.01</title>
+    <link href="maplibre/maplibre-gl.css" rel="stylesheet"/>
+    <style>
+        #map {
+            width: 100%;
+            height: 100vh;
+        }
+        #controls {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 10px;
+            border-radius: 3px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .disp-layers{
+            background-color: #ffffff;
+            margin: 3px;
+        }
+        .disp-attributes{
+            background-color: #ffffff;
+            margin: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <div id="controls">
+        <div class="disp-layers">
+            <label>
+                <input type="checkbox" id="osm-layer-chk" checked>
+                Open Street Map
+            </label>
+            <br>
+            <label>
+                <input type="checkbox" id="pmtiles-raster-layer-chk" checked>
+                LCR-PGR(2000-2020)
+            </label>
+            <br>
+
+        </div>
+        <div class="disp-attributes">
+            <label>属性情報</label>
+            <div id="attributes"></div>
+        </div>
+    </div>
+ <!-- // <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script> -->
+    <script src="maplibre/maplibre-gl.js"></script>
+    <script src="pmtiles/pmtiles.js"></script>
+    <script>
+        const protocol = new pmtiles.Protocol();
+        maplibregl.addProtocol('pmtiles', protocol.tile);
+
+        const layerIds = ['osm-layer', 'pmtiles-raster-layer'];
+
+        const map = new maplibregl.Map({
+            container: 'map',
+            style: {
+                version: 8,
+                sources: {
+                    'osm-tiles': {
+                        type: 'raster',
+                        tiles: [
+                            'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
+                        ],
+                        tileSize: 256
+                    }
+                },
+                layers: [
+                    {
+                        id: 'osm-layer',
+                        type: 'raster',
+                        source: 'osm-tiles',
+                        minzoom: 0,
+                        maxzoom: 19
+                    }
+                ]
+            },
+            center: [125.5736, -8.5568],
+            zoom: 11
+        });
+
+        const toggleLayer = (id) => {
+            const isChecked = document.getElementById(`${id}-chk`).checked;
+            if (isChecked) {
+                map.setLayoutProperty(id, 'visibility', 'visible');
+            } else {
+                map.setLayoutProperty(id, 'visibility', 'none');
+            }
+        }
+
+        layerIds.forEach(lyrId => {
+            document.querySelector(`#${lyrId}-chk`).addEventListener('change', () => {
+                toggleLayer(lyrId);
+            });
+        });
+
+        map.addControl(new maplibregl.NavigationControl());
+
+        map.on('load', () => {
+
+
+            // ラスタのPMTilesソースを追加
+            map.addSource('pmtiles-raster-source', {
+                type: 'raster',
+                tiles: [
+                    'pmtiles://http://127.0.0.1:8080/Data/LCRPGR.pmtiles/{z}/{x}/{y}.png'
+                ],
+                tileSize: 256,
+                minzoom: 0,
+                maxzoom: 19
+            });
+
+
+            // ラスタのPMTilesレイヤーを追加
+            map.addLayer({
+                id: 'pmtiles-raster-layer',
+                type: 'raster',
+                source: 'pmtiles-raster-source',
+                paint: {
+                    'raster-opacity': 0.4 // 透過度を設定 (0.5は50%の透過度)
+                },
+                minzoom: 0,
+                maxzoom: 19
+            });
+
+ 
+
+        });
+
+
+    </script>
+</body>
+</html>
