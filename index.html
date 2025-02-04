@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SDG 11.3.1 ver.01</title>
-    <link href="maplibre/maplibre-gl.css" rel="stylesheet"/>
+    <link href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" rel="stylesheet"/>
     <style>
         #map {
             width: 100%;
@@ -50,8 +50,8 @@
         </div>
     </div>
  <!-- // <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script> -->
-    <script src="maplibre/maplibre-gl.js"></script>
-    <script src="pmtiles/pmtiles.js"></script>
+    <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
+    <script src="https://unpkg.com/pmtiles/dist/pmtiles.js"></script>
     <script>
         const protocol = new pmtiles.Protocol();
         maplibregl.addProtocol('pmtiles', protocol.tile);
@@ -109,7 +109,7 @@
             map.addSource('pmtiles-raster-source', {
                 type: 'raster',
                 tiles: [
-                    'pmtiles://http://127.0.0.1:8080/Data/LCRPGR.pmtiles/{z}/{x}/{y}.png'
+                   'pmtiles://https://nnkhij.github.io/test2/dataLCRPGR.pmtiles/{z}/{x}/{y}.png'
                 ],
                 tileSize: 256,
                 minzoom: 0,
